@@ -4,6 +4,8 @@ import os
 import file
 import accmgr
 
+accmgr.log_out()
+
 def cls():
     if os.name == 'nt':
         os.system('cls')
