@@ -3,14 +3,17 @@
 import csv
 
 fields = ['id', 'name', 'score']
-
 database = 'database.csv'
+auth_status = 'auth_status.txt'
+accounts = 'acc.csv'
 
 def nuke():
-    global database, fields
+    global database, fields, accounts
     with open(database, 'w') as file:
         writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
+    with open(accounts, 'w') as file:
+        file.write('')
 
 def write_data(id, name, score):
     global database, fields

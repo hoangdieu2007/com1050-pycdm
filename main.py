@@ -2,6 +2,7 @@
 
 import os
 import file
+import accmgr
 
 def cls():
     if os.name == 'nt':
@@ -9,8 +10,25 @@ def cls():
     else:
         os.system('clear')
 
+status = False
+def authenticate():
+    global status
+    status = accmgr.check_auth()
+    if not status:
+        print('Unauthorized')
+    else:
+        print('Authorized')
+
 #function 1: add new student
 def add_new_student():
+
+    #check auth
+    if not status:
+        print('\nYou are not permitted to use this feature\n')
+        input('Press enter to continue...')
+        cls()
+        return
+    
     print('')
     while True:
         print("Please type student ID: ", end="")
@@ -28,14 +46,20 @@ def add_new_student():
             file.write_data(student_id, student_name, student_score)
             print('')
             print("Added new student!")
-            input("Press enter to continue...")
+            print('Do you want to add more students? (y/n)')
+            more = input()
+            if (more=='y'):
+                print('')
+                continue
+            input("\nPress enter to continue...")
             cls()
             break
         elif opt==2:
             print('')
             continue
         else:
-            print("\nInvalid option\n")
+            cls()
+            break
         
 #function 2: search student by id
 def search_by_id() :
@@ -56,6 +80,44 @@ def display_all_score():
     input("Press enter to continue...")
     cls()
 
+def log_me_in_plz():
+    print('Username: ', end='')
+    username = input()
+    print('Password: ', end='')
+    password = input()
+    log_in_status = accmgr.log_in(username, password)
+    if log_in_status==True:
+        print('Authorization succeed!')
+    else:
+        print('Authorization failed: Account not found')
+    input('\nPress enter to continue...')
+    cls()
+
+def register_new_acc():
+    while True:
+        print('Username: ', end='')
+        username = input()
+        print('Password: ', end='')
+        password = input()
+        print("\nAre these credentials correct?")
+        print("1, Yes, add them to the database")
+        print("2, No, let me type these data again")
+        print("Option: ", end="")
+        opt = int(input())
+        if opt==1:
+            accmgr.register(username, password)
+            print('')
+            print("Account created successfully!")
+            input("\nPress enter to continue...")
+            cls()
+            break
+        elif opt==2:
+            print('')
+            continue
+        else:
+            cls()
+            break
+
 #program loop
 while True:
     #epic intro
@@ -64,23 +126,40 @@ while True:
     print("#       by n00b_c0der      #")
     print("############################\n")
 
-    print("Choose your operation:")
-    print("1, Add a new student")
+    #authorization info
+    authenticate()
+
+    print("\nChoose your operation:")
+    print("1, Add new students")
     print("2, Search student by ID")
     print("3, Display all scores")
-    print("4, Exit")
+    print('4, Account Management')
+    print("5, Exit")
     print("Type your operation here: ", end="")
     option = input()
-    if option=='4':
+    if option=='5':
+        accmgr.log_out()
+        cls()
         break
     elif option=='1': add_new_student()
     elif option=='2': search_by_id()
     elif option=='3': display_all_score()
+    elif option=='4':
+        print('\nAccount management')
+        print('1, Log in')
+        print('2, Register')
+        print('Choose your operation: ', end="")
+        minichoice = input()
+        print('')
+        if minichoice == '1':
+            log_me_in_plz()
+        elif minichoice == '2':
+            register_new_acc()
+            pass
     elif option=='???':
         print("\nSECRET OPERATIONS!!!")
         print("1, Nuke the entire database")
         print("Choose your secret operations: ", end="")
-        
         minichoice = input()
         if minichoice=='1':
             file.nuke()
