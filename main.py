@@ -1,37 +1,48 @@
-#written by Hoang Xuan Dieu
-
 import os
 import file
 import accmgr
 
 accmgr.log_out()
+file.load_dict()
 
 def cls():
     if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')
+    #epic intro
+    print("############################")
+    print("#  CLASSROOM DATA MANAGER  #")
+    print("#       by n00b_c0der      #")
+    print("############################\n")
 
-status = False
-def authenticate():
-    global status
-    status = accmgr.check_auth()
-    if not status:
-        print('Unauthorized')
+def real_cls():
+    if os.name == 'nt':
+        os.system('cls')
     else:
-        print('Authorized')
+        os.system('clear')
+
+logged_in = False
+def authentication_status():
+    global logged_in
+    if not logged_in:
+        return 'Unauthorized\n'
+    else:
+        return 'Authorized\n'
+def authenticate():
+    global logged_in
 
 #function 1: add new student
 def add_new_student():
+    cls()
 
-    #check auth
-    if not status:
-        print('\nYou are not permitted to use this feature\n')
-        input('Press enter to continue...')
+    #student limit: 1000
+    if len(file.datadict)>=1000:
+        print("Student limit exceeded.")
+        input("\nPress enter to continue...")
         cls()
         return
-    
-    print('')
+
     while True:
         print("Please type student ID: ", end="")
         student_id = input()
@@ -51,21 +62,21 @@ def add_new_student():
             print('Do you want to add more students? (y/n)')
             more = input()
             if (more=='y'):
-                print('')
+                cls()
                 continue
             input("\nPress enter to continue...")
             cls()
-            break
+            return
         elif opt==2:
-            print('')
+            cls()
             continue
         else:
             cls()
-            break
+            return
         
 #function 2: search student by id
 def search_by_id() :
-    print('')
+    cls()
     print("Please type student ID: ", end="")
     student_id = input()
     #linearly search student
@@ -76,28 +87,30 @@ def search_by_id() :
 
 #function 3: display score of all students
 def display_all_score():
-    print('')
+    cls()
     file.showall()
     print('')
     input("Press enter to continue...")
     cls()
 
 def log_me_in_plz():
-    print('Username: ', end='')
+    global logged_in
+    print('\nUsername: ', end='')
     username = input()
     print('Password: ', end='')
     password = input()
     log_in_status = accmgr.log_in(username, password)
     if log_in_status==True:
         print('Authorization succeed!')
+        logged_in = True
     else:
-        print('Authorization failed: Account not found')
+        print('Authorization failed: Wrong credentials or account not found')
     input('\nPress enter to continue...')
     cls()
 
 def register_new_acc():
     while True:
-        print('Username: ', end='')
+        print('\nUsername: ', end='')
         username = input()
         print('Password: ', end='')
         password = input()
@@ -118,62 +131,75 @@ def register_new_acc():
             continue
         else:
             cls()
-            break
+            return
 
 #program loop
 while True:
-    #epic intro
-    print("############################")
-    print("#  CLASSROOM DATA MANAGER  #")
-    print("#       by n00b_c0der      #")
-    print("############################\n")
+    cls()
 
-    #authorization info
-    authenticate()
+    print(authentication_status())
 
-    print("\nChoose your operation:")
-    print("1, Add new students")
-    print("2, Search student by ID")
-    print("3, Display all scores")
-    print('4, Account Management')
-    print("5, Exit")
-    print("Type your operation here: ", end="")
-    option = input()
-    if option=='5':
-        accmgr.log_out()
-        cls()
-        break
-    elif option=='1': add_new_student()
-    elif option=='2': search_by_id()
-    elif option=='3': display_all_score()
-    elif option=='4':
-        print('\nAccount management')
+    if not logged_in:
+        print('Account management')
         print('1, Log in')
         print('2, Register')
+        print('3, Quit')
         print('Choose your operation: ', end="")
         minichoice = input()
-        print('')
         if minichoice == '1':
             log_me_in_plz()
         elif minichoice == '2':
             register_new_acc()
-            pass
-    elif option=='???':
-        print("\nSECRET OPERATIONS!!!")
-        print("1, Nuke the entire database")
-        print("Choose your secret operations: ", end="")
-        minichoice = input()
-        if minichoice=='1':
-            file.nuke()
-            cls()
-        if minichoice=='???':
-            print("\nInstruction unclear, nuking your computer instead...")
-            print("del C:/Windows/System32\n")
-            print("I'm just joking :)\n")
-            input("Press enter to continue...")
-            cls()
+        elif minichoice == '3':
+            real_cls()
+            break
+        else:
+            continue
 
     else:
-        print("Invalid option\n")
-        input("Press enter to continue...")
-        cls()
+        print("Choose your operation:")
+        print("1, Add new students")
+        print("2, Search student by ID")
+        print("3, Display all scores")
+        print("4, Account Management")
+        print("5, Exit")
+        print("Type your operation here: ", end="")
+        option = input()
+        if option=='5':
+            accmgr.log_out()
+            real_cls()
+            break
+        elif option=='1': add_new_student()
+        elif option=='2': search_by_id()
+        elif option=='3': display_all_score()
+        elif option=='4':
+            cls()
+            print('Account management')
+            print('1, Log in')
+            print('2, Register')
+            print('Choose your operation: ', end="")
+            minichoice = input()
+            if minichoice == '1':
+                log_me_in_plz()
+            elif minichoice == '2':
+                register_new_acc()
+        elif option=='???':
+            cls()
+            print("SECRET OPERATIONS!!!")
+            print("1, Nuke the entire database")
+            print("Choose your secret operations: ", end="")
+            minichoice = input()
+            if minichoice=='1':
+                file.nuke()
+                cls()
+            if minichoice=='???':
+                print("\nInstruction unclear, nuking your computer instead...")
+                print("del C:/Windows/System32\n")
+                print("I'm just joking :)\n")
+                input("Press enter to continue...")
+                cls()
+
+        else:
+            print("Invalid option\n")
+            input("Press enter to continue...")
+            cls()
