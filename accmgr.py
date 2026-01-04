@@ -39,14 +39,31 @@ def log_in(username, password):
             if (cur_acc[0]==username and cur_acc[1]==password):
                 with open(auth_status, 'w') as file:
                     logged_in = True
-                    file.write('true')
+                    file.write(username)
     if logged_in:
         return True
     else:
-        return False
-        
+        return False        
 
 def log_out():
     global auth_status
     with open(auth_status, 'w') as file:
-        file.write('false')
+        file.write('')
+
+def change_pass(new_pass):
+    global accounts, auth_status
+    username = ''
+    with open(auth_status, 'r') as file:
+        username = file.readline()
+    new_pass = encrypt(new_pass)
+    lines = []
+    with open(accounts, 'r') as file:
+        lines = file.readlines()
+    for i in range(len(lines)):
+        cur_acc = lines[i].split()
+        if username == cur_acc[0]:
+            cur_acc[1] = new_pass
+            break
+    lines[i] = cur_acc[0]+' '+cur_acc[1]
+    with open(accounts, 'w') as file:
+        file.writelines(lines)
