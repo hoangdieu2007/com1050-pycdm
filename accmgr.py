@@ -66,6 +66,6 @@ def change_pass(new_pass):
         if username == cur_acc[0]:
             cur_acc[1] = new_pass
             break
-    lines[i] = cur_acc[0]+' '+cur_acc[1]
+    lines[i] = cur_acc[0]+' '+cur_acc[1]+'\n'
     with open(accounts, 'w') as file:
         file.writelines(lines)
