@@ -26,7 +26,7 @@ def register(username, password):
     username = encrypt(username)
     password = encrypt(password)
     with open(accounts, 'a') as file:
-        file.write(username+' '+password)
+        file.write(username+' '+password+'\n')
 
 def log_in(username, password):
     global accounts, auth_status
@@ -36,6 +36,8 @@ def log_in(username, password):
     with open(accounts, 'r') as file:
         for line in file:
             cur_acc = line.split()
+            if len(cur_acc)==0:
+                continue
             if (cur_acc[0]==username and cur_acc[1]==password):
                 with open(auth_status, 'w') as file:
                     logged_in = True
